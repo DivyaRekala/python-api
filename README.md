@@ -1,5 +1,5 @@
 
-## Flask Application with Nginx and PostgreSQL
+# Flask Application with Nginx and PostgreSQL
 
 This repository contains a Flask application, a PostgreSQL database, and Nginx configured to serve the application. The setup uses Docker Compose for container orchestration.
 
