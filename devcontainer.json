@@ -10,7 +10,8 @@
           "dbaeumer.vscode-eslint", 
           "ms-python.pylance", 
           "ms-toolsai.jupyter",
-          "cweijan.vscode-database-client2"
+          "cweijan.vscode-database-client2",
+          "ms-azuretools.vscode-docker"
         ],
         "settings": {
           "python.pythonPath": "/usr/local/bin/python",
