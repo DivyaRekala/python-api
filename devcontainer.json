@@ -1,0 +1,25 @@
+{
+    "name": "Flask Python DevContainer",
+    "dockerFile": "./Dockerfile",  // Dockerfile is in the root
+    "context": ".",  // Build context is the root of the project
+    "workspaceFolder": "/workspace",  // Folder inside the container where VS Code will open
+    "customizations": {
+      "vscode": {
+        "extensions": [
+          "ms-python.python", 
+          "dbaeumer.vscode-eslint", 
+          "ms-python.pylance", 
+          "ms-toolsai.jupyter"
+        ],
+        "settings": {
+          "python.pythonPath": "/usr/local/bin/python",
+          "python.linting.enabled": true,
+          "python.linting.pylintEnabled": true,
+          "python.formatting.autopep8Path": "/usr/local/bin/autopep8",
+          "editor.formatOnSave": true
+        }
+      }
+    },
+    "postCreateCommand": "pip install -r /workspace/app/requirements.txt"  // Install Python dependencies
+  }
+  
