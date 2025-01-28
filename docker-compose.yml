@@ -6,10 +6,13 @@ services:
       context: .
     ports:
       - "5000:5000"
+
     networks:
       my_network:
         ipv4_address: 172.28.0.2
-        restart: always
+    restart: always
+    volumes:
+    - .:/workspace
 
   nginx:
     image: nginx:alpine
