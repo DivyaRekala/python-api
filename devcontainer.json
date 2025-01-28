@@ -22,6 +22,6 @@
         }
       }
     },
-    "postCreateCommand": "pip install -r /workspace/app/requirements.txt"  // Install Python dependencies
+    "postCreateCommand": "docker-compose up --build"  // Install Python dependencies
   }
   
