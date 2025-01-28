@@ -1,28 +1,29 @@
-from flask import Flask, jsonify, request
+import os
+import psycopg2
+from flask import Flask, jsonify
 
 app = Flask(__name__)
 
-# Sample data
-tasks = [
-    {"id": 1, "title": "Task 1", "completed": False},
-    {"id": 2, "title": "Task 2", "completed": True}
-]
+# Database connection setup
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-@app.route('/api/tasks', methods=['GET'])
-def get_tasks():
-    return jsonify(tasks)
+def get_db_connection():
+    conn = psycopg2.connect(DATABASE_URL)
+    return conn
 
-@app.route('/api/tasks', methods=['POST'])
-def add_task():
-    new_task = request.get_json()
-    tasks.append(new_task)
-    return jsonify(new_task), 201
+@app.route('/api/data', methods=['GET'])
+def get_data():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM my_table')  # Replace 'my_table' with your actual table name
+        rows = cursor.fetchall()
+        conn.close()
 
-@app.route('/api/tasks/<int:task_id>', methods=['DELETE'])
-def delete_task(task_id):
-    global tasks
-    tasks = [task for task in tasks if task['id'] != task_id]
-    return jsonify({"message": "Task deleted"}), 200
+        data = [{"id": row[0], "name": row[1]} for row in rows]
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500  # Return the error message in the response
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
