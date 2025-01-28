@@ -9,7 +9,8 @@
           "ms-python.python", 
           "dbaeumer.vscode-eslint", 
           "ms-python.pylance", 
-          "ms-toolsai.jupyter"
+          "ms-toolsai.jupyter",
+          "cweijan.vscode-database-client2"
         ],
         "settings": {
           "python.pythonPath": "/usr/local/bin/python",
