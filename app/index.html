@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python API Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        #loading {
+            text-align: center;
+            display: none;
+        }
+        #error {
+            color: red;
+            text-align: center;
+            display: none;
+        }
+        #data-container {
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .input-container {
+            margin-bottom: 15px;
+        }
+        input {
+            padding: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Python API Data Viewer</h1>
+        
+        <div class="input-container">
+            <label for="api-url">API URL:</label>
+            <input type="text" id="api-url" placeholder="http://localhost:5000/api/data">
+        </div>
+        
+        <button id="fetch-btn">Fetch Data</button>
+        
+        <div id="loading">Loading data...</div>
+        <div id="error"></div>
+        
+        <div id="data-container"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fetchBtn = document.getElementById('fetch-btn');
+            const apiUrlInput = document.getElementById('api-url');
+            const loadingElement = document.getElementById('loading');
+            const errorElement = document.getElementById('error');
+            const dataContainer = document.getElementById('data-container');
+            
+            fetchBtn.addEventListener('click', fetchData);
+            
+            function fetchData() {
+                const apiUrl = apiUrlInput.value.trim();
+                
+                if (!apiUrl) {
+                    showError('Please enter a valid API URL');
+                    return;
+                }
+                
+                // Clear previous data and show loading
+                dataContainer.innerHTML = '';
+                showLoading(true);
+                hideError();
+                
+                fetch(apiUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        showLoading(false);
+                        console.log(data);
+                        displayData(data);
+                    })
+                    .catch(error => {
+                        showLoading(false);
+                        console.log(data);
+                        showError(`Error fetching data: ${error.message}`);
+                    });
+            }
+            
+            function displayData(data) {
+                if (Array.isArray(data)) {
+                    displayArrayData(data);
+                } else if (typeof data === 'object' && data !== null) {
+                    displayObjectData(data);
+                } else {
+                    dataContainer.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                }
+            }
+            
+            function displayArrayData(data) {
+                if (data.length === 0) {
+                    dataContainer.innerHTML = '<p>No data available</p>';
+                    return;
+                }
+                
+                const table = document.createElement('table');
+                const thead = document.createElement('thead');
+                const tbody = document.createElement('tbody');
+                
+                // Create header row
+                const headerRow = document.createElement('tr');
+                const keys = Object.keys(data[0]);
+                
+                keys.forEach(key => {
+                    const th = document.createElement('th');
+                    th.textContent = key;
+                    headerRow.appendChild(th);
+                });
+                
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+                
+                // Create data rows
+                data.forEach(item => {
+                    const row = document.createElement('tr');
+                    
+                    keys.forEach(key => {
+                        const td = document.createElement('td');
+                        td.textContent = item[key] !== null && item[key] !== undefined ? item[key] : '';
+                        row.appendChild(td);
+                    });
+                    
+                    tbody.appendChild(row);
+                });
+                
+                table.appendChild(tbody);
+                dataContainer.appendChild(table);
+            }
+            
+            function displayObjectData(data) {
+                const table = document.createElement('table');
+                const keys = Object.keys(data);
+                
+                keys.forEach(key => {
+                    const row = document.createElement('tr');
+                    
+                    const keyCell = document.createElement('th');
+                    keyCell.textContent = key;
+                    row.appendChild(keyCell);
+                    
+                    const valueCell = document.createElement('td');
+                    if (typeof data[key] === 'object' && data[key] !== null) {
+                        valueCell.textContent = JSON.stringify(data[key], null, 2);
+                    } else {
+                        valueCell.textContent = data[key] !== null && data[key] !== undefined ? data[key] : '';
+                    }
+                    row.appendChild(valueCell);
+                    
+                    table.appendChild(row);
+                });
+                
+                dataContainer.appendChild(table);
+            }
+            
+            function showLoading(show) {
+                loadingElement.style.display = show ? 'block' : 'none';
+            }
+            
+            function showError(message) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
+            
+            function hideError() {
+                errorElement.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

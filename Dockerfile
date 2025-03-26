@@ -5,14 +5,14 @@ FROM python:3.10-slim
 WORKDIR /app
 
 # Copy the application files into the container
-COPY app/ /app/
+COPY app/ /app/ 
 
 # Install the dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Expose the application port
-EXPOSE 5000
+EXPOSE 8000
 
 # Command to run the Gunicorn server
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:app"]
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8000", "app:app"]
 # CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]

@@ -1,0 +1,40 @@
+    <!DOCTYPE html>
+   <html>
+    <body>
+    <div>
+        {% for row in data %}
+        <p>a:{{ row[0] }}</p>
+        <p>{{ row[1] }}</p>
+        {% endfor %}
+    </div>
+    </body>
+    </html>
+   
+   
+   
+   
+   
+   
+   
+   <!--DOCTYPE html>
+        <html>
+        <head>
+            <title>Fetch Data</title>
+        </head>
+        <body>
+            <ul id="data-list"></ul>
+        
+            <script>
+                fetch('/data')
+                    .then(response => response.json())
+                    .then(data => {
+                        const dataList = document.getElementById('data-list');
+                        data.forEach(item => {
+                            const listItem = document.createElement('li');
+                            listItem.textContent = item.column_name;
+                            dataList.appendChild(listItem);
+                        });
+                    });
+            </script>
+        </body>
+        </html-->
