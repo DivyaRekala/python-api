@@ -107,6 +107,14 @@
             function fetchData() {
                 const apiUrl = apiUrlInput.value.trim();
                 
+                let headers = new Headers();
+                headers.append('Access-Control-Allow-Origin', 'http://localhost:8080');
+                headers.append('Access-Control-Allow-Credentials', 'true');
+                headers.append('GET', 'POST', 'OPTIONS');
+                headers.append('Content-Type', 'application/json');
+                headers.append('Accept', 'application/json');
+                //headers.append('Authorization', 'Basic ' + base64.encode(username + ":" +  password));
+                headers.append('Origin','http://localhost:8080');
                 if (!apiUrl) {
                     showError('Please enter a valid API URL');
                     return;
@@ -116,8 +124,13 @@
                 dataContainer.innerHTML = '';
                 showLoading(true);
                 hideError();
-                
-                fetch(apiUrl)
+
+                fetch(apiUrl, {
+                    mode: 'cors',
+                    credentials: 'include',
+                    method: 'GET,POST',
+                    headers: headers
+                    })
                     .then(response => {
                         if (!response.ok) {
                             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -126,12 +139,11 @@
                     })
                     .then(data => {
                         showLoading(false);
-                        console.log(data);
                         displayData(data);
                     })
                     .catch(error => {
                         showLoading(false);
-                        console.log(data);
+                        console.log(apiUrl);
                         showError(`Error fetching data: ${error.message}`);
                     });
             }
